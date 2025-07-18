@@ -1,3 +1,5 @@
 2025-07-18 14:12:33 ERROR [AuthService] - Invalid JWT token for user
 2025-07-18 14:13:20 INFO  [StartupRunner] - Application initialized
 2025-07-18 14:14:10 WARN  [UserService] - User ID not found in database
+[INFO] 2025-07-18 18:34:56 LogWatcher - Application started successfully
+[INFO] 2025-07-18 18:34:56 LogWatcher - Application closed successfully

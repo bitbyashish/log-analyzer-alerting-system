@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LogController {
 
-    private final LogEntryRepository logEntryRepository;
+    private LogEntryRepository logEntryRepository;
 
     @GetMapping
     public List<LogEntry> getAllLogs() {

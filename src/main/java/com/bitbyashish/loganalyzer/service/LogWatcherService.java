@@ -1,6 +1,8 @@
 package com.bitbyashish.loganalyzer.service;
 
+import com.bitbyashish.loganalyzer.entity.Alert;
 import com.bitbyashish.loganalyzer.model.LogEntry;
+import com.bitbyashish.loganalyzer.repository.AlertRepository;
 import com.bitbyashish.loganalyzer.repository.LogEntryRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +16,16 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 import java.util.regex.*;
 
 @Service
 @RequiredArgsConstructor
 public class LogWatcherService {
 
-    private LogEntryRepository logEntryRepository;
+    private final LogEntryRepository logEntryRepository;
+    private final AlertRepository alertRepository;
+    private final AlertService alertService;
 
     private static final Pattern logPattern = Pattern.compile(
             "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\s+(ERROR|INFO|WARN)\\s+\\[(.*?)\\]\\s+-\\s+(.*)");
@@ -37,7 +42,7 @@ public class LogWatcherService {
                 .setDelayDuration(Duration.ofMillis(1000))
                 .setCharset(StandardCharsets.UTF_8)
                 .setReOpen(true)
-                .setTailFromEnd(true) // true = only new lines
+                .setTailFromEnd(true)
                 .setBufferSize(4096)
                 .get();
 
@@ -57,15 +62,32 @@ public class LogWatcherService {
                 String source = matcher.group(3);
                 String message = matcher.group(4);
 
+                // Save log entry
                 LogEntry entry = LogEntry.builder()
                         .timestamp(timestamp)
                         .level(level)
                         .source(source)
                         .message(message)
                         .build();
-
                 logEntryRepository.save(entry);
+
+                // Raise alert for certain levels
+                if ("ERROR".equalsIgnoreCase(level) || "CRITICAL".equalsIgnoreCase(level)) {
+                    alertService.raiseAlert(entry);
+                }
+
+                // 🔔 Save alert if level is ERROR
+                if ("ERROR".equalsIgnoreCase(level)) {
+                    Alert alert = Alert.builder()
+                            .timestamp(timestamp)
+                            .level(level)
+                            .source(source)
+                            .message(message)
+                            .build();
+                    alertRepository.save(alert);
+                }
             }
         }
     }
 }
+

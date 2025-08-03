@@ -14,14 +14,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LogController {
 
-    private LogEntryRepository logEntryRepository;
+    private final LogEntryRepository logEntryRepository;
 
     @GetMapping
     public List<LogEntry> getAllLogs() {
         return logEntryRepository.findAll();
     }
 
-    @GetMapping
+    @GetMapping("/filter")
     public List<LogEntry> getFilteredLog(@RequestParam(required = false) String level,
                                          @RequestParam(required = false) String source,
                                          @RequestParam(required = false)

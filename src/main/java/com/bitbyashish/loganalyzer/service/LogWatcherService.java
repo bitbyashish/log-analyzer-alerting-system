@@ -20,7 +20,7 @@ import java.util.regex.*;
 @RequiredArgsConstructor
 public class LogWatcherService {
 
-    private final LogEntryRepository logEntryRepository;
+    private LogEntryRepository logEntryRepository;
 
     private static final Pattern logPattern = Pattern.compile(
             "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\s+(ERROR|INFO|WARN)\\s+\\[(.*?)\\]\\s+-\\s+(.*)");

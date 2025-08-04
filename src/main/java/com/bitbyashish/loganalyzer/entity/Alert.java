@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Alert {
 
     @Id
@@ -25,18 +28,4 @@ public class Alert {
 
     @ManyToOne
     private LogEntry logEntry;
-
-    // Constructors
-    public Alert() {}
-
-    public Alert(String level, String message, String source, LocalDateTime timestamp) {
-        this.level = level;
-        this.message = message;
-        this.source = source;
-        this.timestamp = timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
 }

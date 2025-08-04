@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 public class AlertService {
 
     private final AlertRepository alertRepository;
+    private final EmailService emailService;
+
+    private static final String TO_EMAIL = "58a8c90c9d-d80100+1@inbox.mailtrap.io";
 
     public void raiseAlert(LogEntry logEntry) {
         Alert alert = Alert.builder()
@@ -22,5 +25,13 @@ public class AlertService {
                 .build();
 
         alertRepository.save(alert);
+
+        // Send alert email
+        String subject = "🚨 Log Alert: " + logEntry.getLevel();
+        String content = "Timestamp: " + logEntry.getTimestamp() + "\n"
+                + "Source: " + logEntry.getSource() + "\n"
+                + "Message: " + logEntry.getMessage();
+
+        emailService.sendAlertEmail(TO_EMAIL, subject, content);
     }
 }
